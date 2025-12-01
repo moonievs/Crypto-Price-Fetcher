@@ -29,17 +29,17 @@ python-dotenv
 
 *2. Discord Webhook*
 
-Create a <a href="https://coinmarketcap.com/api/">webhook</a>:
+>Create a <a href="https://coinmarketcap.com/api/">webhook</a>:
 
 3. Environment Variables
 
-Create a .env file in the project directory:
+Create a `.env` file in the project directory:
 
 ```bash
 KEY="your_coinmarketcap_api_key_here"
 DISCORD_WEBHOOK="your_discord_webhook_url_here"
 ```
-<sub>Make sure `.env` is in your `.gitignore`.</sub>	
+Make sure `.env` is in your `.gitignore`.	
 <hr>
 <ins>Configuration</ins>
 <p>&nbsp;</p>
