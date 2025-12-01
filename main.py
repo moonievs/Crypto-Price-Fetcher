@@ -5,22 +5,21 @@ import time
 from dotenv import load_dotenv
 
 load_dotenv()
-api_key = os.getenv("KEY")
-if not api_key:
+API_KEY = os.getenv("KEY")
+WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK")
+if not API_KEY:
     raise Exception("API Key does not exist in .env file, make sure to fetch a valid CMC API Key here: https://coinmarketcap.com/api/")
-webhook_url = os.getenv("DISCORD_WEBHOOK")
-if not webhook_url:
+if not WEBHOOK_URL:
     raise Exception("Discord Webhook not present, refer to: https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks")
 
-url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
-image_url = "https://s2.coinmarketcap.com/static/img/coins/64x64/"
+URL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
+IMAGE_URL = "https://s2.coinmarketcap.com/static/img/coins/64x64/"
 
 headers = {
   'Accepts': 'application/json',
-  'X-CMC_PRO_API_KEY': api_key,
+  'X-CMC_PRO_API_KEY': API_KEY,
 }
 
-#slug:color for embed
 crypto_color_config = {
     "bitcoin": 16744192,
     "ethereum": 6449295,
@@ -32,7 +31,7 @@ crypto_color_config = {
 def get_info(slug):
     #make the request, get the json
     params = {"slug":slug}
-    r = requests.get(url=url, headers=headers, params=params, timeout=30)
+    r = requests.get(URL=URL, headers=headers, params=params, timeout=30)
     
     if r.status_code == 200: # check for positive status
         crypto_data = r.json()
@@ -49,7 +48,7 @@ def get_info(slug):
                 price = data_location["price"]
                 last_24_hr = data_location["percent_change_24h"]
                 last_seven_days = data_location["percent_change_7d"]
-                image = f"{image_url}{coin_id}.png"
+                image = f"{IMAGE_URL}{coin_id}.png"
         
         else:    # check reponse status (CMC response contains own status & errors)
             raise Exception(f"Fetch for {slug} failed: {crypto_data['status']['error_message']}") #raise CMC error message
@@ -60,10 +59,13 @@ def get_info(slug):
     return price, last_24_hr, last_seven_days, image
 
 def discord_message(title:str, price:str, last_24_hours:str, last_seven_days:str, image:str, color):
+    """params: 
+
+    - slug: the colour for the embed"""
     embed = {
         "title": f"{title.title()}'s Price",
         "description": f"{price}\n\n**Last 24 Hours:** {last_24_hours}%\n**Last 7 Days: **{last_seven_days}%",
-        "thumbnail": {"url": image},
+        "thumbnail": {"URL": image},
         "footer": {"text": "Crypto Price Monitor"},
         "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "color": color
@@ -72,7 +74,7 @@ def discord_message(title:str, price:str, last_24_hours:str, last_seven_days:str
     data = {
         "embeds": [embed]
     }
-    response = requests.post(webhook_url, json=data, timeout=30)
+    response = requests.post(WEBHOOK_URL, json=data, timeout=30)
 
     if response.status_code >= 400:
         print(f"Failed to send to discord webhook, {response.text}")
