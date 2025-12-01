@@ -31,7 +31,7 @@ crypto_color_config = {
 def get_info(slug):
     #make the request, get the json
     params = {"slug":slug}
-    r = requests.get(URL=URL, headers=headers, params=params, timeout=30)
+    r = requests.get(url=URL, headers=headers, params=params, timeout=30)
     
     if r.status_code == 200: # check for positive status
         crypto_data = r.json()
