@@ -65,7 +65,7 @@ def discord_message(title:str, price:str, last_24_hours:str, last_seven_days:str
     embed = {
         "title": f"{title.title()}'s Price",
         "description": f"{price}\n\n**Last 24 Hours:** {last_24_hours}%\n**Last 7 Days: **{last_seven_days}%",
-        "thumbnail": {"URL": image},
+        "thumbnail": {"url": image},
         "footer": {"text": "Crypto Price Monitor"},
         "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "color": color
